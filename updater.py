@@ -65,7 +65,7 @@ class Updater:
     def switch_tab_to_2(self):
         self.driver.switch_to.window(self.driver.window_handles[1])
 
-    # This method has the driver obejct swith to the third browser tab, which has the vendor summary loaded.
+    # This method has the driver object switch to the third browser tab, which has the vendor summary loaded.
     def switch_tab_to_3(self):
         self.driver.switch_to.window(self.driver.window_handles[2])
 
@@ -169,7 +169,7 @@ class Updater:
         home_button_element = self.driver.find_element(By.XPATH, self.map.rk_xpath['home_button'])
         home_button_element.click()
 
-    # This method has the driver click the 'remove item" button on the vendor list once the update is completed.
+    # This method has the driver click the 'remove item' button on the vendor list once the update is completed.
     def vc_remove_item(self):
         print('Removing vendor')
         remove_button_element = self.driver.find_element(By.XPATH, self.map.vc_xpath['remove_button'])
