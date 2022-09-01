@@ -8,43 +8,52 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions as ec
 from selenium.webdriver.common.action_chains import ActionChains
 
+
 class Updater:
     
-    # The init method here instaciates 3 objects upon creation of an Updater object. First it creates the chromedriver object from selenium to control the browser,
-    # then it creates a Map object from xpath_map.py which stores all of the browser xpaths, finally it creates an ActionChains object which is used for more precise control
-    # in some methods. In addition to this it also creates a counter attribute which is an integer of 1. This is used for tracking the number of vendors processed for user
-    # feedback.
+    # The init method here instantiates 3 objects upon creation of an Updater object. First it creates the
+    # chromedriver object from selenium to control the browser, then it creates a Map object from xpath_map.py which
+    # stores all the browser xpaths, finally it creates an ActionChains object which is used for more precise
+    # control in some methods. In addition to this it also creates a counter attribute which is an integer of 1. This
+    # is used for tracking the number of vendors processed for user feedback.
     def __init__(self):
-        self.driver = self.chomedriver_setup()
+        self.supplier_id = ''
+        self.vc_id = ''
+        self.driver = self.chromedriver_setup()
         self.map = Map()
         self.actions = ActionChains(self.driver)
         self.counter = 1
 
-    # This method creates the chromedriver object and specifies the exe path for chromedriver.exe. It also specifies the path for your browswer User_data, a copy of which
-    # is needed to run the chrome with your normal profile.
-    def chomedriver_setup(self):
+    # This method creates the chromedriver object and specifies the exe path for chromedriver.exe. It also specifies
+    # the path for your browser User_data, a copy of which is needed to run the chrome with your normal profile.
+    @staticmethod
+    def chromedriver_setup():
         print('Starting Webdriver')
         my_options = webdriver.ChromeOptions()
         my_options.add_argument('user-data-dir=C:/Users/Tyler/ProgramingProjects/vendor_id_updater/User Data')
-        driver_Setup = webdriver.Chrome(options=my_options, executable_path='C:/Users/Tyler/ProgramingProjects/vendor_id_updater/chromedriver.exe')
+        driver_Setup = webdriver.Chrome(options=my_options, executable_path='C:/Users/Tyler/ProgramingProjects'
+                                                                            '/vendor_id_updater/chromedriver.exe')
         return driver_Setup
 
-    # This method has the driver object open the Vendoer ID update list in Vcommerce then wait for the list to load. If 20 seconds pass without loading it will create
-    # a timeout exception.
+    # This method has the driver object open the Vendor ID update list in Vcommerce then wait for the list to load.
+    # If 20 seconds pass without loading it will create a timeout exception.
     def open_vcommerce(self):
         print('Opening Vcommerce')
-        self.driver.get('https://solutions.sciquest.com/apps/Router/ApprNotifications?SelectedTab=ApprNotificationSupplierRegistration&AuthUser=6637615&OrgName=Vulcan&tmstmp=1661890913947')
+        self.driver.get('https://solutions.sciquest.com/apps/Router/ApprNotifications?SelectedTab'
+                        '=ApprNotificationSupplierRegistration&AuthUser=6637615&OrgName=Vulcan&tmstmp=1661890913947')
         sleep(3)
         login_button_element = self.driver.find_element(By.XPATH, self.map.vc_xpath['login_button'])
         login_button_element.click()
-        WebDriverWait(self.driver, 20).until(ec.presence_of_element_located((By.XPATH, self.map.vc_xpath['search_results'])))
+        WebDriverWait(self.driver, 20).until(ec.presence_of_element_located((By.XPATH, self.map.vc_xpath['search_'
+                                                                                                         'results'])))
 
     # This method has the driver object open riskonnect in another tab, then switch to that tab and log in.
     def open_riskonnect(self):
         print('Opening Riskonnect\n')
         self.driver.execute_script("window.open('https://riskonnectvmc.lightning.force.com/lightning/page/home');")
         self.driver.switch_to.window(self.driver.window_handles[1])
-        WebDriverWait(self.driver, 20).until(ec.presence_of_element_located((By.XPATH, self.map.rk_xpath['login_button'])))
+        WebDriverWait(self.driver, 20).until(ec.presence_of_element_located((By.XPATH, self.map.rk_xpath['login_'
+                                                                                                         'button'])))
         login_button_element = self.driver.find_element(By.XPATH, self.map.rk_xpath['login_button'])
         login_button_element.click()
 
@@ -72,17 +81,19 @@ class Updater:
         self.actions.click(item_element).perform()
         self.actions.key_up(Keys.CONTROL).perform()
 
-    # This method has the driver swich to the Vcommerce summary page and wait for it to load.
+    # This method has the driver switch to the Vcommerce summary page and wait for it to load.
     def vc_access_summary(self):
         print('Accessing summary')
         vc_summary_element = self.driver.find_element(By.XPATH, self.map.vc_xpath['summary_button'])
         vc_summary_element.click()
-        WebDriverWait(self.driver, 20).until(ec.presence_of_element_located((By.XPATH, self.map.vc_xpath['summary_page_body'])))
+        WebDriverWait(self.driver, 20).until(ec.presence_of_element_located((By.XPATH, self.map.vc_xpath['summary_page'
+                                                                                                         '_body'])))
         vc_summary_body_element = self.driver.find_element(By.XPATH, self.map.vc_xpath['summary_page_body'])
         vc_summary_body_element.send_keys(Keys.CONTROL + 'a')
         vc_summary_body_element.send_keys(Keys.CONTROL + 'c')
 
-    # This method takes the copied data from the vc_summary and locates the supplier ID number and Vcommerce ID number, which are saved as class attributes.
+    # This method takes the copied data from the vc_summary and locates the supplier ID number and Vcommerce ID
+    # number, which are saved as class attributes.
     def parse_summary(self):
         print('Reading vendor summary')
         summary_text = clipboard.paste()
@@ -106,6 +117,7 @@ class Updater:
     # This method searches Riskonnect for the Vcommerce number and selects opens the matching item in a new tab.
     def rk_search_for_vc_id(self):
         print('Searching for vendor')
+        sleep(0.5)
         search_button_element = self.driver.find_element(By.XPATH, self.map.rk_xpath['search_button'])
         search_button_element.click()
         sleep(0.5)
@@ -116,17 +128,19 @@ class Updater:
         search_bar_element.send_keys(self.vc_id)
         sleep(0.5)
         search_bar_element.send_keys(Keys.ENTER)
-        WebDriverWait(self.driver, 20).until(ec.presence_of_element_located((By.XPATH, self.map.rk_xpath['search_result_first'])))
+        WebDriverWait(self.driver, 20).until(ec.presence_of_element_located((By.XPATH, self.map.rk_xpath['search_result'
+                                                                                                         '_first'])))
         search_result_element = self.driver.find_element(By.XPATH, self.map.rk_xpath['search_result_first'])
         self.actions.key_down(Keys.CONTROL).perform()
         self.actions.click(search_result_element).perform()
         self.actions.key_up(Keys.CONTROL).perform()
     
-    # This method opens the supplier ID box in Riskonnect, clears the old value, and replaces it with the value saved as the 
-    # supplier ID attribute.
+    # This method opens the supplier ID box in Riskonnect, clears the old value, and replaces it with the value saved
+    # as the supplier ID attribute.
     def rk_update_supplier_id(self):
         print('Updating supplier ID')
-        WebDriverWait(self.driver, 20).until(ec.presence_of_element_located((By.XPATH, self.map.rk_xpath['edit_button'])))
+        WebDriverWait(self.driver, 20).until(ec.presence_of_element_located((By.XPATH, self.map.rk_xpath['edit_'
+                                                                                                         'button'])))
         edit_button_element = self.driver.find_element(By. XPATH, self.map.rk_xpath['edit_button'])
         edit_button_element.click()
         sleep(0.5)
@@ -141,7 +155,7 @@ class Updater:
         duplicate_check = self.driver.find_elements(By.XPATH, self.map.rk_xpath['duplicate_alert'])
         if duplicate_check:
             f = open('C:/Users/Tyler/ProgramingProjects/vendor_id_updater/duplicates_list.txt', 'a')
-            f.write(f'vcommerce ID:{self.vc_id} did not accept supplier ID:{self.supplier_id} due to a duplicate')
+            f.write(f'vcommerce ID:{self.vc_id} did not accept supplier ID:{self.supplier_id} due to a duplicate\n')
             f.close()
         else:
             pass
@@ -150,7 +164,8 @@ class Updater:
     def rk_return_home(self):
         print('Resetting Riskonnect')
         sleep(0.5)
-        WebDriverWait(self.driver, 20).until(ec.presence_of_element_located((By.XPATH, self.map.rk_xpath['home_button'])))
+        WebDriverWait(self.driver, 20).until(ec.presence_of_element_located((By.XPATH, self.map.rk_xpath['home_'
+                                                                                                         'button'])))
         home_button_element = self.driver.find_element(By.XPATH, self.map.rk_xpath['home_button'])
         home_button_element.click()
 
@@ -163,11 +178,13 @@ class Updater:
     # This method has the driver wait until the item has been removed from the Vcommerce list before moving forward.
     def wait_for_remove(self):
         sleep(2)
-        WebDriverWait(self.driver, 20).until(ec.presence_of_element_located((By.XPATH, self.map.vc_xpath['remove_button'])))
+        WebDriverWait(self.driver, 20).until(ec.presence_of_element_located((By.XPATH, self.map.vc_xpath['remove_'
+                                                                                                         'button'])))
         print(f'Vendor {self.counter} updated\n')
         self.counter += 1
 
-    # This method runs both the open_vcommerce() method and the open_riskonnect() method. This are for use in the __main__ script.
+    # This method runs both the open_vcommerce() method and the open_riskonnect() method. This is for use in the
+    # __main__ script.
     def prep_update(self):
         self.open_vcommerce()
         self.open_riskonnect()
@@ -190,4 +207,3 @@ class Updater:
         self.switch_tab_to_1()
         self.vc_remove_item()
         self.wait_for_remove()
-
