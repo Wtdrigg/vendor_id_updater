@@ -124,7 +124,6 @@ class Updater:
         search_bar_element = self.driver.find_element(By.XPATH, self.map.rk_xpath['search_bar'])
         search_bar_element.click()
         search_bar_element.clear()
-        # search_bar_element.send_keys('1006389748')
         search_bar_element.send_keys(self.vc_id)
         sleep(0.5)
         search_bar_element.send_keys(Keys.ENTER)

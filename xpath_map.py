@@ -1,13 +1,13 @@
 class Map:
-    vc_xpath = {'search_results':'//*[@id="ApprNotifications_body"]/div[5]/table/tbody/tr[2]/td/div/form/table/tbody/tr[2]/td/table/tbody/tr/td/div[2]/table',
+    vc_xpath = {'search_results': '//*[@id="ApprNotifications_body"]/div[5]/table/tbody/tr[2]/td/div/form/table/tbody/tr[2]/td/table/tbody/tr/td/div[2]/table',
                 'summary_button': '//*[@id="PhoenixNavLink_PHX_NAV_SupplierProfile_SupplierSummary"]',
                 'summary_page_body': '//*[@id="SupplierSummary_body"]',
-                'first_item' : '//*[@id="ApprNotifications_body"]/div[5]/table/tbody/tr[2]/td/div/form/table/tbody/tr[2]/td/table/tbody/tr/td/div[2]/table/tbody/tr[1]/td[1]/a',
+                'first_item': '//*[@id="ApprNotifications_body"]/div[5]/table/tbody/tr[2]/td/div/form/table/tbody/tr[2]/td/table/tbody/tr/td/div[2]/table/tbody/tr[1]/td[1]/a',
                 'remove_button': '/html/body/div[5]/table/tbody/tr[2]/td/div/form/table/tbody/tr[2]/td/table/tbody/tr/td/div[2]/table/tbody/tr[1]/td[3]/input',
                 'login_button': '/html/body/div/div/div[2]/div[1]/div[3]/form/div/div[3]/div/button'}
 
-    rk_xpath = {'password_box':'//*[@id="password"]',
-                'login_button' : '//*[@id="Login"]',
+    rk_xpath = {'password_box': '//*[@id="password"]',
+                'login_button': '//*[@id="Login"]',
                 'search_button': '/html/body/div[4]/div[1]/section/header/div[2]/div[2]/div/button',
                 'search_bar': '/html/body/div[4]/div[2]/div/div/div[1]/div/div[1]/lightning-input/div/input',
                 'search_result_first': '//*[@id="brandBand_2"]/div/div/div[2]/div/div[2]/div/div/div/div[3]/div/div/div/div[2]/div[1]/div[2]/div/div/div/div[2]/div[2]/div[1]/div/div/table/tbody/tr/th/span/a',
