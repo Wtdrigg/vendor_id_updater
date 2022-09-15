@@ -7,6 +7,10 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions as ec
 from selenium.webdriver.common.action_chains import ActionChains
+from tkinter import *
+from tkinter.ttk import *
+from selenium.webdriver.chrome.service import Service as ChromeService
+from subprocess import CREATE_NO_WINDOW
 
 
 class Updater:
@@ -17,22 +21,27 @@ class Updater:
     # control in some methods. In addition to this it also creates a counter attribute which is an integer of 1. This
     # is used for tracking the number of vendors processed for user feedback.
     def __init__(self):
+        self.driver = None
+        self.gui_elements = self.setup_gui()
         self.supplier_id = ''
         self.vc_id = ''
-        self.driver = self.chromedriver_setup()
         self.map = Map()
-        self.actions = ActionChains(self.driver)
+        self.actions = None
         self.counter = 1
 
     # This method creates the chromedriver object and specifies the exe path for chromedriver.exe. It also specifies
     # the path for your browser User_data, a copy of which is needed to run the chrome with your normal profile.
+
     @staticmethod
     def chromedriver_setup():
         print('Starting Webdriver')
         my_options = webdriver.ChromeOptions()
         my_options.add_argument('user-data-dir=C:/Users/Tyler/ProgramingProjects/vendor_id_updater/User Data')
-        driver_Setup = webdriver.Chrome(options=my_options, executable_path='C:/Users/Tyler/ProgramingProjects'
-                                                                            '/vendor_id_updater/chromedriver.exe')
+        chrome_service = ChromeService('C:/Users/Tyler/ProgramingProjects/vendor_id_updater/chromedriver.exe')
+        chrome_service.creationflags = CREATE_NO_WINDOW
+        driver_Setup = webdriver.Chrome(options=my_options, executable_path='C:/Users/Tyler/ProgramingProjects/'
+                                                                            'vendor_id_updater/chromedriver.exe',
+                                        service=chrome_service)
         return driver_Setup
 
     # This method has the driver object open the Vendor ID update list in Vcommerce then wait for the list to load.
@@ -206,3 +215,53 @@ class Updater:
         self.switch_tab_to_1()
         self.vc_remove_item()
         self.wait_for_remove()
+
+    def setup_gui(self):
+        root = Tk()
+        root.geometry('500x150')
+        root.title('Vendor ID Updater')
+        label_1 = Label(root, text='How many vendors do you want to process?')
+        label_1.place(x=10, y=10)
+        entry_box = Entry(root)
+        entry_box.place(x=300, y=10)
+        submit_button = Button(root, text='SUBMIT', command=self.submit_button_click)
+        submit_button.place(x=150, y=50)
+        exit_button = Button(root, text='EXIT', command=self.exit_button_click)
+        exit_button.place(x=300, y=50)
+        return root, label_1, entry_box, submit_button, exit_button
+
+    def use_gui(self):
+        root = self.gui_elements[1]
+        root.mainloop()
+
+    def submit_button_click(self):
+        root, label_1, entry_box, submit_button, exit_button = self.gui_elements[0:]
+        user_input = entry_box.get()
+        try:
+            user_input = int(user_input)
+        except ValueError:
+            label_1.configure(text='ERROR: Invalid Input, please input a number')
+            entry_box.delete(0, 'end')
+        else:
+            self.driver = self.chromedriver_setup()
+            self.actions = ActionChains(self.driver)
+            label_1.configure(text='Preparing vendor update...')
+            clipboard.copy(user_input)
+            entry_box.delete(0, 'end')
+            root.update()
+            self.prep_update()
+            label_1.configure(text=f'Updating {user_input} vendor(s)...')
+            root.update()
+            for i in range(user_input):
+                self.process_update()
+            label_1.configure(text=f'{user_input} vendor(s) have been updated successfully!')
+            root.update()
+
+    def exit_button_click(self):
+        root = self.gui_elements[0]
+        try:
+            self.driver.quit()
+        except AttributeError:
+            root.destroy()
+        else:
+            root.destroy()
