@@ -1,5 +1,5 @@
 from updater import Updater
-from updater_gui import *
+from updater_gui import UpdaterGUI
 
 
 if __name__ == '__main__':
