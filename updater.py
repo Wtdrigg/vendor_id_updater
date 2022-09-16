@@ -62,20 +62,28 @@ class Updater:
         self.driver.get('https://solutions.sciquest.com/apps/Router/ApprNotifications?SelectedTab'
                         '=ApprNotificationSupplierRegistration&AuthUser=6637615&OrgName=Vulcan&tmstmp=1661890913947')
         sleep(3)
-        login_button_element = self.driver.find_element(By.XPATH, self.map.vc_xpath['login_button'])
-        login_button_element.click()
-        WebDriverWait(self.driver, 20).until(ec.presence_of_element_located((By.XPATH, self.map.vc_xpath['search_'
-                                                                                                         'results'])))
+        login_verify = self.driver.find_elements(By.XPATH, self.map.vc_xpath['login_button'])
+        if login_verify:
+            login_button_element = self.driver.find_element(By.XPATH, self.map.vc_xpath['login_button'])
+            login_button_element.click()
+            WebDriverWait(self.driver, 20).until(ec.presence_of_element_located((By.XPATH, self.map.vc_xpath[
+                'search_results'])))
+        else:
+            WebDriverWait(self.driver, 20).until(ec.presence_of_element_located((By.XPATH, self.map.vc_xpath[
+                'search_results'])))
 
     # This method has the driver object open riskonnect in another tab, then switch to that tab and log in.
     def open_riskonnect(self):
         print('Opening Riskonnect\n')
         self.driver.execute_script("window.open('https://riskonnectvmc.lightning.force.com/lightning/page/home');")
         self.driver.switch_to.window(self.driver.window_handles[1])
-        WebDriverWait(self.driver, 20).until(ec.presence_of_element_located((By.XPATH, self.map.rk_xpath['login_'
-                                                                                                         'button'])))
-        login_button_element = self.driver.find_element(By.XPATH, self.map.rk_xpath['login_button'])
-        login_button_element.click()
+        sleep(3)
+        login_verify = self.driver.find_elements(By.XPATH, self.map.rk_xpath['login_button'])
+        if login_verify:
+            login_button_element = self.driver.find_element(By.XPATH, self.map.rk_xpath['login_button'])
+            login_button_element.click()
+        else:
+            pass
 
     # This method has the driver object switch to the first browser tab, which has Vcommerce loaded.
     def switch_tab_to_1(self):
