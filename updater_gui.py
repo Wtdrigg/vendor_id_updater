@@ -98,7 +98,10 @@ class UpdaterGUI:
 
     # the exit_button_click() method closes the webdriver and GUI.
     def exit_button_click(self):
-        self.updater_obj.driver.close()
-        self.updater_obj.switch_tab_to_1()
-        self.updater_obj.driver.close()
         self.root.destroy()
+        try:
+            self.updater_obj.driver.close()
+            self.updater_obj.switch_tab_to_1()
+            self.updater_obj.driver.close()
+        except AttributeError:
+            pass
