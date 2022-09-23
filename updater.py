@@ -13,11 +13,10 @@ from subprocess import CREATE_NO_WINDOW
 
 class Updater:
     
-    # The init method here instantiates 3 objects upon creation of an Updater object. First it creates the
-    # chromedriver object from selenium to control the browser, then it creates a Map object from xpath_map.py which
-    # stores all the browser xpaths, finally it creates an ActionChains object which is used for more precise
-    # control in some methods. In addition to this it also creates a counter attribute which is an integer of 1. This
-    # is used for tracking the number of vendors processed for user feedback.
+    # The init method constructs all required class attributes. driver and actions are placeholders and are fully updated when the GUI is run.
+    # The map is an object that contains the Xpaths of the web elements of the websites we are working in.
+    # supplier_id and vc_id are placeholder strings that are updated later and counter is only used for keeping track of how many vendors
+    # the program has updated in any given run.
     def __init__(self):
         self.driver = None
         self.actions = None
@@ -28,23 +27,25 @@ class Updater:
 
     # This method creates the chromedriver object and specifies the exe path for chromedriver.exe. It also specifies
     # the path for your browser User_data, a copy of which is needed to run the chrome with your normal profile.
-
+    # The ChromeService class is used to have chromedriver run without a CMD window being opened.
     @staticmethod
     def chromedriver_setup():
         print('Starting Webdriver')
         my_options = webdriver.ChromeOptions()
-        my_options.add_argument('user-data-dir=C:/Users/Tyler/ProgramingProjects/vendor_id_updater/User Data')
-        chrome_service = ChromeService('C:/Users/Tyler/ProgramingProjects/vendor_id_updater/chromedriver.exe')
+        my_options.add_argument('user-data-dir=C:/Users/driggerst/Python/vendor_id_updater/User Data')
+        chrome_service = ChromeService('C:/Users/driggerst/Python/vendor_id_updater/chromedriver.exe')
         chrome_service.creationflags = CREATE_NO_WINDOW
-        driver_Setup = webdriver.Chrome(options=my_options, executable_path='C:/Users/Tyler/ProgramingProjects/'
-                                                                            'vendor_id_updater/chromedriver.exe',
+        driver_Setup = webdriver.Chrome(options=my_options, 
+                                        executable_path='C:/Users/driggerst/Python/vendor_id_updater/chromedriver.exe',
                                         service=chrome_service)
         return driver_Setup
 
+    # The actionchains_setup method creates an ActionChains object. This is used to input keystroke combinations into the chromedriver.
     def actionchains_setup(self):
         actions = ActionChains(self.driver)
         return actions
 
+    # The clipboard_copy method simply copys any passed in text into the clipboard. This is useful for quickly grabing the text from a website.
     @staticmethod
     def clipboard_copy(text):
         results = clipboard.copy(text)
@@ -55,7 +56,7 @@ class Updater:
         results = clipboard.paste()
         return results
 
-    # This method has the driver object open the Vendor ID update list in Vcommerce then wait for the list to load.
+    # The open_vcommerce method has the driver object open the Vendor ID update list in Vcommerce then wait for the list to load.
     # If 20 seconds pass without loading it will create a timeout exception.
     def open_vcommerce(self):
         print('Opening Vcommerce')
@@ -181,7 +182,7 @@ class Updater:
         sleep(1)
         duplicate_check = self.driver.find_elements(By.XPATH, self.map.rk_xpath['duplicate_alert'])
         if duplicate_check:
-            f = open('C:/Users/Tyler/ProgramingProjects/vendor_id_updater/duplicates_list.txt', 'a')
+            f = open('C:/Users/driggerst/Python/vendor_id_updater/duplicates_list.txt', 'a')
             f.write(f'vcommerce ID:{self.vc_id} did not accept supplier ID:{self.supplier_id} due to a duplicate\n')
             f.close()
         else:
