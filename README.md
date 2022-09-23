@@ -5,6 +5,6 @@ This program uses Selenium and Chromedriver to update the vendor numbers of newl
 purchase order system.
 
 It uses a basic GUI with 2 buttons, an entry box, a label, and progress bar. When the processing is completed the GUI buttons may be used to process again, or close
-the chromedriver.
+the program and Chromedriver.
 
-Note that these two webpages are inaccessable without the company chrome extension and login credentials saved to your profile.
+Note that these two webpages are inaccessable without the correct chrome extension and login credentials saved to the chrome profile.
