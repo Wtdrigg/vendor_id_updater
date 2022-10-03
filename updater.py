@@ -144,26 +144,25 @@ class Updater:
         # creates two lists from the data by splitting on whitespace
         summary_list = summary_text.split()
         summary_list_2 = summary_text.split()
-        # looks through the first list for the string 'Number'. When found it saves the index location and checks if the
-        # list item prior to the saved index is the string 'Supplier'. If so, the list item after the saved index
-        # is saved. If not, it deletes that instance of the string 'Number' from the list and looks for the next.
-        # this loops until it locates the correct combination of strings 'Supplier' and 'Number'
-        for item in summary_list:
+        # looks through the first list for the string 'Number'. When found it takes the iteration count provided by
+        # enumerate() and checks if the list item at the prior iteration (count - 1) is the string 'Supplier'. If so,
+        # that means that the list item at the next iteration (count + 1) is the supplier number and is saved as
+        # the supplier_id class attribute
+        for count, item in enumerate(summary_list):
             if item == 'Number':
-                temp_index = summary_list.index(item)
-                if summary_list[temp_index - 1] == 'Supplier':
-                    self.supplier_id = summary_list[temp_index + 1]
+                if summary_list[count - 1] == 'Supplier':
+                    self.supplier_id = summary_list[count + 1]
                     break
                 else:
                     summary_list.remove(item)
                     continue
-        # looks through the second list for the string 'ID'. When found the string index position in the list is saved
-        # then the next item in the list (saved index + 1) is then saved as a class attribute. When this is found
-        # the loop is broken.
-        for item in summary_list_2:
+        # looks through the second list for the string 'ID'. When found, this means the next iteration in the list
+        # is the Vcommerce ID number, so we take the iteration count provided by enumerate() and then add 1 to it to
+        # get the list index position of the next iteration, which contains the number we are looking for. We then
+        # save the list item at that index position as the vc_id class attribute
+        for count, item in enumerate(summary_list_2):
             if item == 'ID':
-                temp_index = summary_list_2.index(item)
-                self.vc_id = summary_list_2[temp_index + 1]
+                self.vc_id = summary_list_2[count + 1]
                 break
     
     # The rk_search_for_vc_id() method searches Riskonnect for the Vcommerce number and opens the matching
